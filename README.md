@@ -11,6 +11,7 @@ This distribution includes `run.sh` for easier control of the daemon.
  - Default: simple two-way relaying.
  - NickServ: authenticates with nickserv before joining channels.
  - FLIP: specialized mode for [FLIP](http://new-wiki.freenetproject.org/FLIP) which removes the numbered suffix on outgoing usernames.
+ - ReadOnly: one-way relay of messages outbound
 
 ## Requirements
 
