@@ -32,7 +32,7 @@ def main():
                 return None
 
         options = {}
-        for option in [ "timeout", "host", "port", "nick", "channel", "info", "heartbeat", "password", "username", "realname" ]:
+        for option in [ "timeout", "host", "port", "nick", "channel", "heartbeat", "password", "username", "realname" ]:
             options[option] = get(option)
 
         mode = get("mode")
@@ -90,14 +90,10 @@ class IRCRelayer(irc.IRCClient):
         self.channel = config['channel']
         self.nickname = config['nick']
         self.identifier = config['identifier']
-        self.privMsgResponse = config['info']
         self.heartbeatInterval = float(config['heartbeat'])
         self.username = config['username']
         self.realname = config['realname']
         log.msg("IRC Relay created. Name: %s | Host: %s | Channel: %s"%(self.nickname, self.network, self.channel))
-        # IRC RFC: https://tools.ietf.org/html/rfc2812#page-4
-        if len(self.nickname) > 9:
-            log.msg("Nickname %s is %d characters long, which exceeds the RFC maximum of 9 characters. This may cause connection problems."%(self.nickname, len(self.nickname)))
 
     def formatUsername(self, username):
         return username.split("!")[0]
@@ -125,13 +121,8 @@ class IRCRelayer(irc.IRCClient):
         #If someone addresses the bot directly, respond in the same way.
         if channel == self.nickname:
             log.msg("Recieved privmsg from %s."%user)
-            self.msg(user, self.privMsgResponse)
         else:
             self.relay("[%s] %s"%(self.formatUsername(user), message))
-            if message.startswith(self.nickname + ':'):
-                self.say(self.channel, self.privMsgResponse)
-                #For consistancy, if anyone responds to the bot's response:
-                self.relay("[%s] %s"%(self.formatUsername(self.nickname), self.privMsgResponse))
 
     def kickedFrom(self, channel, kicker, message):
         log.msg("Kicked by %s. Message \"%s\""%(kicker, message))
